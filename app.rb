@@ -26,7 +26,8 @@ configure do
 	(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_date DATA,
-    content TEXT
+    content TEXT,
+    author TEXT
 	)'
 
 		@db.execute 'CREATE TABLE IF NOT EXISTS Comments 
@@ -59,15 +60,31 @@ end
 post '/new' do
   # получает переменную из post-запроса
   content = params[:content]
+  author = params[:author]
 
   if content.length <= 0
   	@error = 'Type post text'
   	return erb :new
   end
 
+    if author.length <= 0
+  	@error = 'Type your name'
+  	return erb :new
+  end
+
   # сохранение данных в БД
 
-  @db.execute 'insert into Posts (content, created_date) values (?, datetime())', [content]
+  @db.execute 'insert into Posts 
+  (
+  content, 
+  created_date, 
+  author
+  ) 
+  values 
+  (
+  ?, 
+  datetime(), 
+  ?)', [content, author]
 
   # перенаправляем на главную страницу
 
@@ -104,6 +121,11 @@ post '/details/:post_id' do
 
 	# получает переменную из post-запроса
   content = params[:content]
+
+  if content.length <= 0
+  	@error = 'Type comment text'
+  	return erb :new
+  end
 
     # сохранение данных в БД
 
