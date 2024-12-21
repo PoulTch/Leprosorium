@@ -62,15 +62,17 @@ post '/new' do
   content = params[:content]
   author = params[:author]
 
-  if content.length <= 0
-  	@error = 'Type post text'
-  	return erb :new
-  end
+  hh = {:author => 'Type your name', 
+  			:content => 'Type post text',                              	                                  
+				}                                                
+                                                                 
+	@error = hh.select {|key,_| params[key] == ""}.values.join(", ") 
+                                                                 
+	if @error != ''                                                  
+		return erb :new                                        
+	end
+                                                              
 
-    if author.length <= 0
-  	@error = 'Type your name'
-  	return erb :new
-  end
 
   # сохранение данных в БД
 
